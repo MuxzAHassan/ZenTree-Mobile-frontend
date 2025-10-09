@@ -48,7 +48,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     // For now, just navigate to HomeScreen
-    navigation.navigate('Home');
+    navigation.navigate('MainTabs');
   };
 
   const handleRegister = () => {
