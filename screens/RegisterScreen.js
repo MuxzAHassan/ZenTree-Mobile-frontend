@@ -5,19 +5,22 @@ import { ToggleButton } from 'react-native-paper';
 
 export default function RegisterScreen({ navigation }) {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [gender, setGender] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    gender: '',
+    dateOfBirth: new Date(),
+    phone: '',
+    email: '',
+    password: '',
+  });
+
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
 
   const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || dateOfBirth;
+    const currentDate = selectedDate || form.dateOfBirth;
     setShowDatePicker(Platform.OS === 'ios');
-    setDateOfBirth(currentDate);
+    setForm({...form, dateOfBirth: currentDate});
   }
 
   const styles = StyleSheet.create({
@@ -76,7 +79,50 @@ export default function RegisterScreen({ navigation }) {
         backgroundColor: '#d3d3d3',
         borderColor: '#d3d3d3',
     },
+    text: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#333',
+    },
   });
+
+  const handleRegister = async () => {
+
+    const { firstName, lastName, email, password, gender, phone} = form;
+
+    //validation
+    if(!firstName || !lastName || !email || !phone || !form.dateOfBirth || !gender || !password) {
+      alert('Isi semua field la oi!');
+      return;
+    }
+
+    try{
+      const response = await fetch('http://192.168.0.6:8080/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+          gender,
+          dateOfBirth: form.dateOfBirth,
+          phone
+        }),
+      });
+
+      const data = await response.json();
+
+      if(response.ok) {
+        alert('Yey lepas register! Pi login lak');
+        navigation.navigate('Login');
+      } else{
+        alert(data.message || 'X lepas register');
+      }
+    } catch(error) {
+      alert('Error: ' + error.message);
+    }
+  }
 
   const gotoLogin = () => {
     // For now, just navigate to LoginScreen
@@ -91,14 +137,14 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
         style={styles.input}
         placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
+        value={form.firstName}
+        onChangeText={text => setForm({...form, firstName: text})}
       />
       <TextInput
         style={styles.input}
         placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
+        value={form.lastName}
+        onChangeText={text => setForm({...form, lastName: text})}
       />
 
       {/*Pressable function for gender selection*/}
@@ -106,20 +152,20 @@ export default function RegisterScreen({ navigation }) {
         <Text style={styles.label}>Gender</Text>
             <View style={{ flexDirection: 'row', gap: 10 }}>
                 <Pressable
-                    onPress={() => setGender('male')}
+                    onPress={() => setForm({...form, gender: 'male'})} // set gender to 'male'
                     style={[
                         styles.toggle,
-                        gender === 'male' && styles.activeToggle
+                        form.gender === 'male' && styles.activeToggle
                     ]}
                 >
                     <Text style={styles.text}>Male</Text>
                 </Pressable>
 
                 <Pressable
-                    onPress={() => setGender('female')}
+                    onPress={() => setForm({...form, gender: 'female'})} // set gender to 'female'
                     style={[
                         styles.toggle,
-                        gender === 'female' && styles.activeToggle
+                        form.gender === 'female' && styles.activeToggle
                     ]}
                 >
                     <Text style={styles.text}>Female</Text>
@@ -129,11 +175,11 @@ export default function RegisterScreen({ navigation }) {
         
         {/*Date picker function for Date of Birth selection*/}    
       <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
-        <Text placeholder="Date of Birth">{dateOfBirth ? dateOfBirth.toDateString() : 'Please select your Date of Birth'}</Text>
+        <Text placeholder="Date of Birth">{form.dateOfBirth ? form.dateOfBirth.toDateString() : 'Please select your Date of Birth'}</Text>
       </TouchableOpacity>
         {showDatePicker && (
         <DateTimePicker
-          value={dateOfBirth}
+          value={form.dateOfBirth}
           mode="date"
           display="default"
           onChange={onChangeDate}
@@ -143,23 +189,23 @@ export default function RegisterScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
+        value={form.phone}
+        onChangeText={text => setForm({...form, phone: text})}
         keyboardType="phone-pad"
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
+        value={form.email}
+        onChangeText={text => setForm({...form, email: text})}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
+        value={form.password}
+        onChangeText={text => setForm({...form, password: text})}
       />
-      <TouchableOpacity style={styles.button} onPress={gotoLogin}>
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
     </View>
