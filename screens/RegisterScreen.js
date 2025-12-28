@@ -116,7 +116,7 @@ export default function RegisterScreen({ navigation }) {
 
     try {
       const response = await fetch(
-        "http://192.168.0.6:8080/api/auth/register",
+        "https://zentree-backend-24l6.onrender.com/api/auth/signup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -183,20 +183,20 @@ export default function RegisterScreen({ navigation }) {
             <Text style={styles.label}>Gender</Text>
             <View style={{ flexDirection: "row", gap: 10 }}>
               <Pressable
-                onPress={() => setForm({ ...form, gender: "male" })} // set gender to 'male'
+                onPress={() => setForm({ ...form, gender: "Male" })} // set gender to 'male'
                 style={[
                   styles.toggle,
-                  form.gender === "male" && styles.activeToggle,
+                  form.gender === "Male" && styles.activeToggle,
                 ]}
               >
                 <Text style={styles.text}>Male</Text>
               </Pressable>
 
               <Pressable
-                onPress={() => setForm({ ...form, gender: "female" })} // set gender to 'female'
+                onPress={() => setForm({ ...form, gender: "Female" })} // set gender to 'female'
                 style={[
                   styles.toggle,
-                  form.gender === "female" && styles.activeToggle,
+                  form.gender === "Female" && styles.activeToggle,
                 ]}
               >
                 <Text style={styles.text}>Female</Text>

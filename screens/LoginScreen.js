@@ -46,9 +46,31 @@ export default function LoginScreen({ navigation }) {
     },
   });
 
-  const handleLogin = () => {
-    // For now, just navigate to HomeScreen
-    navigation.navigate('MainTabs');
+  const handleLogin = async () => {
+  try {
+    const response = await fetch("http://192.168.0.9:5000/api/auth/login", {//boleh test frontend login guna kau punya local machine IP
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Navigate to home screen
+      navigation.navigate("MainTabs");
+      // Later: store JWT token if returned
+      // await AsyncStorage.setItem("token", data.token);
+    } else {
+      alert(data.message || "Invalid email or password");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Something went wrong. Please try again.");
+  }
   };
 
   const handleRegister = () => {
