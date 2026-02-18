@@ -1,17 +1,19 @@
 // HomeScreen.js
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image} from "react-native";
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useLanguage } from '../context/LanguageContext.js';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const { t } = useLanguage();
   const [search, setSearch] = useState("");
 
   const categories = [
-    { name: "Full Body", icon: "💆‍♂️" },
-    { name: "Foot Massage", icon: "🦶" },
-    { name: "Therapeutic", icon: "👐" },
-    { name: "Home Service", icon: "🏠" },
+    { name: t('home.cat_full_body'), icon: "💆‍♂️" },
+    { name: t('home.cat_foot'), icon: "🦶" },
+    { name: t('home.cat_therapeutic'), icon: "👐" },
+    { name: t('home.cat_home_service'), icon: "🏠" },
   ];
 
   const featured = [
@@ -38,8 +40,8 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hi Muaz 👋</Text>
-          <Text style={styles.subtitle}>Ready to relax today?</Text>
+          <Text style={styles.greeting}>{t('home.greeting')}</Text>
+          <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
           <Image
@@ -54,14 +56,14 @@ export default function HomeScreen() {
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search for services or masseurs..."
+        placeholder={t('home.search_placeholder')}
         placeholderTextColor="#888"
         value={search}
         onChangeText={setSearch}
       />
 
       {/* Categories */}
-      <Text style={styles.sectionTitle}>Services</Text>
+      <Text style={styles.sectionTitle}>{t('home.services')}</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -82,7 +84,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* Featured Masseurs */}
-      <Text style={styles.sectionTitle}>Top Rated Masseurs</Text>
+      <Text style={styles.sectionTitle}>{t('home.top_rated')}</Text>
       {featured.map((item) => (
         <TouchableOpacity
           key={item.id}

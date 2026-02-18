@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useLanguage } from '../context/LanguageContext.js';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState({
     name: 'Muaz Abu Hassan',
@@ -23,26 +25,26 @@ export default function ProfileScreen() {
       <Text style={styles.name}>{user.name}</Text>
 
       <View style={styles.infoBox}>
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label}>{t('profile.email')}</Text>
         <Text style={styles.value}>{user.email}</Text>
 
-        <Text style={styles.label}>Phone</Text>
+        <Text style={styles.label}>{t('profile.phone')}</Text>
         <Text style={styles.value}>{user.phoneNumber}</Text>
 
-        <Text style={styles.label}>Gender</Text>
+        <Text style={styles.label}>{t('profile.gender')}</Text>
         <Text style={styles.value}>{user.gender}</Text>
 
-        <Text style={styles.label}>Date of Birth</Text>
+        <Text style={styles.label}>{t('profile.dob')}</Text>
         <Text style={styles.value}>{user.dateofBirth}</Text>
 
       </View>
 
       <TouchableOpacity style={styles.editButton}>
-        <Text style={styles.editText}>Edit Profile</Text>
+        <Text style={styles.editText}>{t('profile.edit')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
+        <Text style={styles.logoutText}>{t('profile.logout')}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useLanguage } from '../context/LanguageContext.js';
+import LanguageSelector from '../components/LanguageSelector.js';
 
 export default function LoginScreen({ navigation }) {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -47,30 +50,30 @@ export default function LoginScreen({ navigation }) {
   });
 
   const handleLogin = async () => {
-  try {
-    const response = await fetch("http://192.168.0.9:5000/api/auth/login", {//boleh test frontend login guna kau punya local machine IP
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      }),
-    });
+    try {
+      const response = await fetch("https://zentree-backend-24l6.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success) {
-      // Navigate to home screen
-      navigation.navigate("MainTabs");
-      // Later: store JWT token if returned
-      // await AsyncStorage.setItem("token", data.token);
-    } else {
-      alert(data.message || "Invalid email or password");
+      if (data.success) {
+        // Navigate to home screen
+        navigation.navigate("MainTabs");
+        // Later: store JWT token if returned
+        // await AsyncStorage.setItem("token", data.token);
+      } else {
+        alert(data.message || t('login.error_invalid'));
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(t('login.error_generic'));
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong. Please try again.");
-  }
   };
 
   const handleRegister = () => {
@@ -79,25 +82,26 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/NakUrut Logo.png')} style={{width: 150, height: 150}} resizeMode='contain' />
+      <LanguageSelector />
+      <Image source={require('../assets/NakUrut Logo.png')} style={{ width: 150, height: 150 }} resizeMode='contain' />
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder={t('login.email')}
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t('login.password')}
         value={password}
         onChangeText={setPassword}
       />
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>{t('login.button')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={handleRegister}>
-        <Text style={styles.link}>Register</Text>
+        <Text style={styles.link}>{t('login.register_link')}</Text>
       </TouchableOpacity>
 
     </View>

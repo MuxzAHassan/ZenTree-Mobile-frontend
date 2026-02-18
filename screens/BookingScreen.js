@@ -11,8 +11,10 @@ import {
   Alert,
   Modal,
 } from 'react-native';
+import { useLanguage } from '../context/LanguageContext.js';
 
 const BookingScreen = () => {
+  const { t } = useLanguage();
   const [searching, setSearching] = useState(false);
   const [massagers, setMassagers] = useState([]);
   const [selectedMassager, setSelectedMassager] = useState(null);
@@ -46,7 +48,7 @@ const BookingScreen = () => {
 
   const handleBooking = () => {
     if (!serviceType || !date || !time) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('booking.error_title'), t('booking.error_fill_all'));
       return;
     }
 
@@ -58,7 +60,10 @@ const BookingScreen = () => {
     };
 
     console.log('Booking data:', bookingData);
-    Alert.alert('Success', `Your massage with ${selectedMassager.name} is booked!`);
+    Alert.alert(
+      t('booking.success_title'),
+      t('booking.success_message').replace('{name}', selectedMassager.name)
+    );
     setModalVisible(false);
     setServiceType('');
     setDate('');
@@ -68,10 +73,10 @@ const BookingScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>NakUrut Booking</Text>
+      <Text style={styles.heading}>{t('booking.title')}</Text>
 
       <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-        <Text style={styles.searchText}>Search Nearby Massagers</Text>
+        <Text style={styles.searchText}>{t('booking.search_button')}</Text>
       </TouchableOpacity>
 
       {searching && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 20 }} />}
@@ -87,8 +92,8 @@ const BookingScreen = () => {
               onPress={() => handleSelectMassager(item)}
             >
               <Text style={styles.massagerName}>{item.name}</Text>
-              <Text>Distance: {item.distance.toFixed(1)} km</Text>
-              <Text>Price: ${item.price}</Text>
+              <Text>{t('booking.distance')}: {item.distance.toFixed(1)} {t('booking.km')}</Text>
+              <Text>{t('booking.price')}: ${item.price}</Text>
             </TouchableOpacity>
           )}
         />
@@ -98,29 +103,29 @@ const BookingScreen = () => {
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalHeading}>Book with {selectedMassager?.name}</Text>
+            <Text style={styles.modalHeading}>{t('booking.book_with')} {selectedMassager?.name}</Text>
 
             <TextInput
               style={styles.input}
-              placeholder="Service Type"
+              placeholder={t('booking.service_type')}
               value={serviceType}
               onChangeText={setServiceType}
             />
             <TextInput
               style={styles.input}
-              placeholder="Date (YYYY-MM-DD)"
+              placeholder={t('booking.date')}
               value={date}
               onChangeText={setDate}
             />
             <TextInput
               style={styles.input}
-              placeholder="Time (HH:MM)"
+              placeholder={t('booking.time')}
               value={time}
               onChangeText={setTime}
             />
 
-            <Button title="Confirm Booking" onPress={handleBooking} />
-            <Button title="Cancel" color="red" onPress={() => setModalVisible(false)} />
+            <Button title={t('booking.confirm')} onPress={handleBooking} />
+            <Button title={t('booking.cancel')} color="red" onPress={() => setModalVisible(false)} />
           </View>
         </View>
       </Modal>
