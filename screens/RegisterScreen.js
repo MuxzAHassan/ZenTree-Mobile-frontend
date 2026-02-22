@@ -10,6 +10,7 @@ import {
   Image,
   Platform,
   ScrollView,
+  Modal,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useLanguage } from '../context/LanguageContext.js';
@@ -20,12 +21,15 @@ export default function RegisterScreen({ navigation }) {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
+    role: "",
     gender: "",
     dateOfBirth: new Date(),
     phone: "",
     email: "",
     password: "",
   });
+
+  const [tooltipVisible, setTooltipVisible] = useState(null);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -87,6 +91,9 @@ export default function RegisterScreen({ navigation }) {
       marginBottom: 15,
       paddingVertical: 10,
       paddingHorizontal: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
     },
     activeToggle: {
       backgroundColor: "#d3d3d3",
@@ -97,15 +104,63 @@ export default function RegisterScreen({ navigation }) {
       fontWeight: "500",
       color: "#333",
     },
+    tooltipIcon: {
+      fontSize: 16,
+      color: "#888",
+    },
+    tooltipOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 30,
+    },
+    tooltipBox: {
+      backgroundColor: "#fff",
+      borderRadius: 12,
+      padding: 20,
+      width: "100%",
+      maxWidth: 320,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 8,
+    },
+    tooltipTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: "#B5651D",
+      marginBottom: 8,
+    },
+    tooltipText: {
+      fontSize: 14,
+      color: "#555",
+      lineHeight: 20,
+    },
+    tooltipClose: {
+      marginTop: 14,
+      alignSelf: "flex-end",
+      paddingVertical: 6,
+      paddingHorizontal: 16,
+      backgroundColor: "#B5651D",
+      borderRadius: 6,
+    },
+    tooltipCloseText: {
+      color: "#fff",
+      fontWeight: "600",
+      fontSize: 13,
+    },
   });
 
   const handleRegister = async () => {
-    const { firstName, lastName, email, password, gender, phone } = form;
+    const { firstName, lastName, email, password, gender, phone, role } = form;
 
     //validation
     if (
       !firstName ||
       !lastName ||
+      !role ||
       !email ||
       !phone ||
       !form.dateOfBirth ||
@@ -172,6 +227,66 @@ export default function RegisterScreen({ navigation }) {
             value={form.lastName}
             onChangeText={(text) => setForm({ ...form, lastName: text })}
           />
+
+          {/*Pressable function for role selection*/}
+          <View
+            style={{
+              width: "100%",
+              alignItems: "flex-start",
+              marginBottom: 10,
+            }}
+          >
+            <Text style={styles.label}>{t('register.role_title')}</Text>
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <Pressable
+                onPress={() => setForm({ ...form, role: "Partner" })}
+                style={[
+                  styles.toggle,
+                  form.role === "Partner" && styles.activeToggle,
+                ]}
+              >
+                <Text style={styles.text}>{t('register.role_partner')}</Text>
+                <TouchableOpacity onPress={() => setTooltipVisible('partner')}>
+                  <Text style={styles.tooltipIcon}>ⓘ</Text>
+                </TouchableOpacity>
+              </Pressable>
+
+              <Pressable
+                onPress={() => setForm({ ...form, role: "User" })}
+                style={[
+                  styles.toggle,
+                  form.role === "User" && styles.activeToggle,
+                ]}
+              >
+                <Text style={styles.text}>{t('register.role_user')}</Text>
+                <TouchableOpacity onPress={() => setTooltipVisible('user')}>
+                  <Text style={styles.tooltipIcon}>ⓘ</Text>
+                </TouchableOpacity>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Tooltip Modal */}
+          <Modal
+            visible={tooltipVisible !== null}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setTooltipVisible(null)}
+          >
+            <Pressable style={styles.tooltipOverlay} onPress={() => setTooltipVisible(null)}>
+              <View style={styles.tooltipBox}>
+                <Text style={styles.tooltipTitle}>
+                  {tooltipVisible === 'partner' ? t('register.role_partner') : t('register.role_user')}
+                </Text>
+                <Text style={styles.tooltipText}>
+                  {tooltipVisible === 'partner' ? t('register.role_partner_tooltip') : t('register.role_user_tooltip')}
+                </Text>
+                <TouchableOpacity style={styles.tooltipClose} onPress={() => setTooltipVisible(null)}>
+                  <Text style={styles.tooltipCloseText}>OK</Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
 
           {/*Pressable function for gender selection*/}
           <View

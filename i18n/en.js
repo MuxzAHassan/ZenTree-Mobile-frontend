@@ -27,6 +27,11 @@ export default {
     'register.success': 'Registration successful! Please login.',
     'register.error_default': 'Registration failed',
     'register.login_link': 'Already have an account? Login',
+    'register.role_title': 'What are you registering as?',
+    'register.role_partner': 'Partner',
+    'register.role_user': 'User',
+    'register.role_partner_tooltip': 'Register as a massage therapist or service provider to offer your services on the platform.',
+    'register.role_user_tooltip': 'Register as a customer to browse and book massage services.',
 
     // Home
     'home.greeting': 'Hi Muaz 👋',

@@ -27,6 +27,11 @@ export default {
     'register.success': 'Pendaftaran berjaya! Sila log masuk.',
     'register.error_default': 'Pendaftaran gagal',
     'register.login_link': 'Sudah ada akaun? Log Masuk',
+    'register.role_title': 'Anda mendaftar sebagai?',
+    'register.role_partner': 'Rakan Kongsi',
+    'register.role_user': 'Pengguna',
+    'register.role_partner_tooltip': 'Daftar sebagai ahli terapi urutan atau penyedia perkhidmatan untuk menawarkan perkhidmatan anda di platform.',
+    'register.role_user_tooltip': 'Daftar sebagai pelanggan untuk melayari dan menempah perkhidmatan urutan.',
 
     // Home
     'home.greeting': 'Hai Muaz 👋',
