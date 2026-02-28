@@ -1,28 +1,54 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import MainTabs from './navigation/MainTabs';
+import PartnerDashboard from './screens/PartnerDashboard';
 import { LanguageProvider } from './context/LanguageContext.js';
+import { AuthProvider, useAuth } from './context/AuthContext.js';
 
 const Stack = createNativeStackNavigator();
+
+function RootNavigator() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#B5651D" />
+      </View>
+    );
+  }
+
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={user ? (user.role === 'partner' ? 'PartnerDashboard' : 'MainTabs') : 'Login'}
+    >
+      {!user ? (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+        </>
+      ) : user.role === 'partner' ? (
+        <Stack.Screen name="PartnerDashboard" component={PartnerDashboard} />
+      ) : (
+        <Stack.Screen name="MainTabs" component={MainTabs} />
+      )}
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
   return (
     <LanguageProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          {/* MainTabs for bottom tab navigation */}
-          <Stack.Screen name="MainTabs" component={MainTabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </AuthProvider>
     </LanguageProvider>
   );
 }

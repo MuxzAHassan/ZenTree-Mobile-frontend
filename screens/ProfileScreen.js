@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useLanguage } from '../context/LanguageContext.js';
+import { useAuth } from '../context/AuthContext.js';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const { t } = useLanguage();
+  const { logout } = useAuth();
 
   const [user, setUser] = useState({
     name: 'Muaz Abu Hassan',
@@ -15,9 +17,8 @@ export default function ProfileScreen() {
     dateofBirth: '13/03/2002',
   });
 
-  const handleLogout = () => {
-    // Handle logout logic here
-    navigation.replace('Login');
+  const handleLogout = async () => {
+    await logout();
   }
 
   return (

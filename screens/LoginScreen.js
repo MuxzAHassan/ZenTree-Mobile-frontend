@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useLanguage } from '../context/LanguageContext.js';
+import { useAuth } from '../context/AuthContext.js';
 import LanguageSelector from '../components/LanguageSelector.js';
+import { loginUser } from '../api/auth';
 
 export default function LoginScreen({ navigation }) {
   const { t } = useLanguage();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -51,22 +54,13 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("https://zentree-backend-24l6.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        }),
-      });
-
+      const response = await loginUser(email, password);
       const data = await response.json();
 
       if (data.success) {
-        // Navigate to home screen
-        navigation.navigate("MainTabs");
-        // Later: store JWT token if returned
-        // await AsyncStorage.setItem("token", data.token);
+        // Store auth data in context
+        await login(data);
+        // Navigation is handled automatically by RootNavigator based on user role
       } else {
         alert(data.message || t('login.error_invalid'));
       }

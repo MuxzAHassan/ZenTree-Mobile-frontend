@@ -13,7 +13,8 @@ import {
   Modal,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useLanguage } from '../context/LanguageContext.js';
+import { useLanguage } from "../context/LanguageContext.js";
+import { registerUser } from "../api/auth";
 
 export default function RegisterScreen({ navigation }) {
   const { t } = useLanguage();
@@ -167,35 +168,32 @@ export default function RegisterScreen({ navigation }) {
       !gender ||
       !password
     ) {
-      alert(t('register.validation_error'));
+      alert(t("register.validation_error"));
       return;
     }
 
     try {
-      const response = await fetch(
-        "https://zentree-backend-24l6.onrender.com/api/auth/signup",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            firstName,
-            lastName,
-            email,
-            password,
-            gender,
-            dateOfBirth: form.dateOfBirth,
-            phone,
-          }),
-        }
-      );
+      const roleValue = role.toLowerCase();
+      console.log("Registering with role:", roleValue); // Debug log
+
+      const response = await registerUser({
+        firstName,
+        lastName,
+        email,
+        password,
+        gender,
+        dateOfBirth: form.dateOfBirth,
+        phone,
+        role: roleValue,
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(t('register.success'));
+        alert(t("register.success"));
         navigation.navigate("Login");
       } else {
-        alert(data.message || t('register.error_default'));
+        alert(data.message || t("register.error_default"));
       }
     } catch (error) {
       alert("Error: " + error.message);
@@ -217,13 +215,13 @@ export default function RegisterScreen({ navigation }) {
           />
           <TextInput
             style={styles.input}
-            placeholder={t('register.firstName')}
+            placeholder={t("register.firstName")}
             value={form.firstName}
             onChangeText={(text) => setForm({ ...form, firstName: text })}
           />
           <TextInput
             style={styles.input}
-            placeholder={t('register.lastName')}
+            placeholder={t("register.lastName")}
             value={form.lastName}
             onChangeText={(text) => setForm({ ...form, lastName: text })}
           />
@@ -236,7 +234,7 @@ export default function RegisterScreen({ navigation }) {
               marginBottom: 10,
             }}
           >
-            <Text style={styles.label}>{t('register.role_title')}</Text>
+            <Text style={styles.label}>{t("register.role_title")}</Text>
             <View style={{ flexDirection: "row", gap: 10 }}>
               <Pressable
                 onPress={() => setForm({ ...form, role: "Partner" })}
@@ -245,8 +243,8 @@ export default function RegisterScreen({ navigation }) {
                   form.role === "Partner" && styles.activeToggle,
                 ]}
               >
-                <Text style={styles.text}>{t('register.role_partner')}</Text>
-                <TouchableOpacity onPress={() => setTooltipVisible('partner')}>
+                <Text style={styles.text}>{t("register.role_partner")}</Text>
+                <TouchableOpacity onPress={() => setTooltipVisible("partner")}>
                   <Text style={styles.tooltipIcon}>ⓘ</Text>
                 </TouchableOpacity>
               </Pressable>
@@ -258,8 +256,8 @@ export default function RegisterScreen({ navigation }) {
                   form.role === "User" && styles.activeToggle,
                 ]}
               >
-                <Text style={styles.text}>{t('register.role_user')}</Text>
-                <TouchableOpacity onPress={() => setTooltipVisible('user')}>
+                <Text style={styles.text}>{t("register.role_user")}</Text>
+                <TouchableOpacity onPress={() => setTooltipVisible("user")}>
                   <Text style={styles.tooltipIcon}>ⓘ</Text>
                 </TouchableOpacity>
               </Pressable>
@@ -273,15 +271,25 @@ export default function RegisterScreen({ navigation }) {
             animationType="fade"
             onRequestClose={() => setTooltipVisible(null)}
           >
-            <Pressable style={styles.tooltipOverlay} onPress={() => setTooltipVisible(null)}>
+            <Pressable
+              style={styles.tooltipOverlay}
+              onPress={() => setTooltipVisible(null)}
+            >
               <View style={styles.tooltipBox}>
                 <Text style={styles.tooltipTitle}>
-                  {tooltipVisible === 'partner' ? t('register.role_partner') : t('register.role_user')}
+                  {tooltipVisible === "partner"
+                    ? t("register.role_partner")
+                    : t("register.role_user")}
                 </Text>
                 <Text style={styles.tooltipText}>
-                  {tooltipVisible === 'partner' ? t('register.role_partner_tooltip') : t('register.role_user_tooltip')}
+                  {tooltipVisible === "partner"
+                    ? t("register.role_partner_tooltip")
+                    : t("register.role_user_tooltip")}
                 </Text>
-                <TouchableOpacity style={styles.tooltipClose} onPress={() => setTooltipVisible(null)}>
+                <TouchableOpacity
+                  style={styles.tooltipClose}
+                  onPress={() => setTooltipVisible(null)}
+                >
                   <Text style={styles.tooltipCloseText}>OK</Text>
                 </TouchableOpacity>
               </View>
@@ -296,7 +304,7 @@ export default function RegisterScreen({ navigation }) {
               marginBottom: 10,
             }}
           >
-            <Text style={styles.label}>{t('register.gender')}</Text>
+            <Text style={styles.label}>{t("register.gender")}</Text>
             <View style={{ flexDirection: "row", gap: 10 }}>
               <Pressable
                 onPress={() => setForm({ ...form, gender: "Male" })}
@@ -305,7 +313,7 @@ export default function RegisterScreen({ navigation }) {
                   form.gender === "Male" && styles.activeToggle,
                 ]}
               >
-                <Text style={styles.text}>{t('register.male')}</Text>
+                <Text style={styles.text}>{t("register.male")}</Text>
               </Pressable>
 
               <Pressable
@@ -315,13 +323,13 @@ export default function RegisterScreen({ navigation }) {
                   form.gender === "Female" && styles.activeToggle,
                 ]}
               >
-                <Text style={styles.text}>{t('register.female')}</Text>
+                <Text style={styles.text}>{t("register.female")}</Text>
               </Pressable>
             </View>
           </View>
 
           {/*Date picker function for Date of Birth selection*/}
-          <Text style={styles.label}>{t('register.dob')}</Text>
+          <Text style={styles.label}>{t("register.dob")}</Text>
           <TouchableOpacity
             style={styles.input}
             onPress={() => setShowDatePicker(true)}
@@ -329,7 +337,7 @@ export default function RegisterScreen({ navigation }) {
             <Text>
               {form.dateOfBirth
                 ? form.dateOfBirth.toDateString()
-                : t('register.dob_placeholder')}
+                : t("register.dob_placeholder")}
             </Text>
           </TouchableOpacity>
           {showDatePicker && (
@@ -343,29 +351,29 @@ export default function RegisterScreen({ navigation }) {
 
           <TextInput
             style={styles.input}
-            placeholder={t('register.phone')}
+            placeholder={t("register.phone")}
             value={form.phone}
             onChangeText={(text) => setForm({ ...form, phone: text })}
             keyboardType="phone-pad"
           />
           <TextInput
             style={styles.input}
-            placeholder={t('register.email')}
+            placeholder={t("register.email")}
             value={form.email}
             onChangeText={(text) => setForm({ ...form, email: text })}
           />
           <TextInput
             style={styles.input}
-            placeholder={t('register.password')}
+            placeholder={t("register.password")}
             value={form.password}
             onChangeText={(text) => setForm({ ...form, password: text })}
           />
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText}>{t('register.button')}</Text>
+            <Text style={styles.buttonText}>{t("register.button")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={gotoLogin}>
-            <Text style={styles.link}>{t('register.login_link')}</Text>
+            <Text style={styles.link}>{t("register.login_link")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
