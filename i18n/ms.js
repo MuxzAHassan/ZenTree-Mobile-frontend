@@ -32,9 +32,13 @@ export default {
     'register.role_user': 'Pengguna',
     'register.role_partner_tooltip': 'Daftar sebagai ahli terapi urutan atau penyedia perkhidmatan untuk menawarkan perkhidmatan anda di platform.',
     'register.role_user_tooltip': 'Daftar sebagai pelanggan untuk melayari dan menempah perkhidmatan urutan.',
+    'register.error_required': 'Ruangan ini diperlukan',
+    'register.error_email_format': 'Sila masukkan alamat emel yang sah',
+    'register.error_phone_format': 'Sila masukkan nombor telefon yang sah',
+    'register.error_password_length': 'Kata laluan mestilah sekurang-kurangnya 6 aksara',
 
     // Home
-    'home.greeting': 'Hai Muaz 👋',
+    'home.greeting': 'Hai {name}',
     'home.subtitle': 'Bersedia untuk berehat hari ini?',
     'home.search_placeholder': 'Cari perkhidmatan atau tukang urut...',
     'home.services': 'Perkhidmatan',
@@ -43,6 +47,7 @@ export default {
     'home.cat_foot': 'Urut Kaki',
     'home.cat_therapeutic': 'Terapeutik',
     'home.cat_home_service': 'Servis Rumah',
+    'home.no_results': 'Tiada hasil ditemui',
 
     // Booking
     'booking.title': 'Tempahan NakUrut',
@@ -52,14 +57,22 @@ export default {
     'booking.km': 'km',
     'booking.book_with': 'Tempah dengan',
     'booking.service_type': 'Jenis Perkhidmatan',
-    'booking.date': 'Tarikh (YYYY-MM-DD)',
-    'booking.time': 'Masa (HH:MM)',
+    'booking.date': 'Tarikh',
+    'booking.time': 'Masa',
     'booking.confirm': 'Sahkan Tempahan',
     'booking.cancel': 'Batal',
     'booking.error_title': 'Ralat',
     'booking.error_fill_all': 'Sila isi semua ruangan',
     'booking.success_title': 'Berjaya',
     'booking.success_message': 'Urutan anda dengan {name} telah ditempah!',
+    'booking.empty_state': 'Tekan "Cari" untuk mencari tukang urut berdekatan',
+    // [FIX 2026-03-29] Added new booking flow translations (Malay)
+    'booking.location_denied': 'Kebenaran lokasi ditolak. Hasil carian tidak akan termasuk jarak.',
+    'booking.available_services': 'Perkhidmatan Tersedia',
+    'booking.no_services': 'Tiada perkhidmatan yang tersenarai lagi',
+    'booking.book_now': 'Tempah',
+    'booking.confirm_booking': 'Sahkan Tempahan',
+    'booking.back': 'Kembali',
 
     // Profile
     'profile.email': 'Emel',
@@ -68,9 +81,26 @@ export default {
     'profile.dob': 'Tarikh Lahir',
     'profile.edit': 'Sunting Profil',
     'profile.logout': 'Log Keluar',
+    'profile.edit_coming_soon': 'Ciri Sunting Profil akan datang!',
 
     // Tabs
     'tabs.home': 'Utama',
     'tabs.booking': 'Tempahan',
     'tabs.profile': 'Profil',
+
+    // Partner Dashboard
+    'partner.welcome': 'Selamat Datang, {name}!',
+    'partner.role_badge': 'Rakan Kongsi',
+    'partner.logout': 'Log Keluar',
+    // [FIX 2026-03-29] Added partner tab + service management translations (Malay)
+    'partner.dashboard_tab': 'Papan Pemuka',
+    'partner.bookings_tab': 'Tempahan',
+    'partner.services_tab': 'Perkhidmatan',
+    'partner.use_tabs': 'Gunakan tab di bawah untuk mengurus tempahan dan perkhidmatan anda',
+    'partner.bookings_title': 'Tempahan',
+    'partner.no_bookings': 'Tiada tempahan lagi',
+    'partner.accept': 'Terima',
+    'partner.reject': 'Tolak',
+    'partner.manage_services': 'Perkhidmatan Saya',
+    'partner.no_services': 'Tiada perkhidmatan lagi. Tambah perkhidmatan pertama anda!',
 };

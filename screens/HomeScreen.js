@@ -3,10 +3,14 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLanguage } from '../context/LanguageContext.js';
+// [FIX] Import useAuth to get the logged-in user's name instead of hardcoding it
+import { useAuth } from '../context/AuthContext.js';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const { t } = useLanguage();
+  // [FIX] Get user data from AuthContext — previously the greeting was hardcoded to "Hi Muaz"
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
 
   const categories = [
@@ -35,12 +39,23 @@ export default function HomeScreen() {
     },
   ];
 
+  // [FIX] Filter featured masseurs based on search input (was previously non-functional)
+  const filteredFeatured = featured.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // [FIX] Filter categories based on search input
+  const filteredCategories = categories.filter((cat) =>
+    cat.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>{t('home.greeting')}</Text>
+          {/* [FIX] Dynamic greeting using user's first name from AuthContext */}
+          <Text style={styles.greeting}>{t('home.greeting').replace('{name}', user?.firstName || '')} 👋</Text>
           <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
@@ -69,7 +84,8 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         style={styles.categoriesContainer}
       >
-        {categories.map((cat, index) => (
+        {/* [FIX] Use filtered categories instead of all categories */}
+        {filteredCategories.map((cat, index) => (
           <TouchableOpacity
             key={index}
             style={styles.categoryCard}
@@ -82,10 +98,15 @@ export default function HomeScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      {/* [FIX] Show empty state when no categories match search */}
+      {filteredCategories.length === 0 && search.length > 0 && (
+        <Text style={styles.emptyText}>{t('home.no_results')}</Text>
+      )}
 
       {/* Featured Masseurs */}
       <Text style={styles.sectionTitle}>{t('home.top_rated')}</Text>
-      {featured.map((item) => (
+      {/* [FIX] Use filtered list instead of full list */}
+      {filteredFeatured.map((item) => (
         <TouchableOpacity
           key={item.id}
           style={styles.masseurCard}
@@ -101,6 +122,10 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity>
       ))}
+      {/* [FIX] Show empty state when no masseurs match search */}
+      {filteredFeatured.length === 0 && search.length > 0 && (
+        <Text style={styles.emptyText}>{t('home.no_results')}</Text>
+      )}
     </ScrollView>
   );
 }
@@ -194,5 +219,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#008080",
     fontWeight: "500",
+  },
+  // [FIX] Added empty state text style for search with no results
+  emptyText: {
+    textAlign: "center",
+    color: "#999",
+    fontSize: 14,
+    marginVertical: 10,
   },
 });

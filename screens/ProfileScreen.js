@@ -1,46 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useLanguage } from '../context/LanguageContext.js';
+// [FIX] Import useAuth to display actual logged-in user data instead of hardcoded values
 import { useAuth } from '../context/AuthContext.js';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const { t } = useLanguage();
-  const { logout } = useAuth();
-
-  const [user, setUser] = useState({
-    name: 'Muaz Abu Hassan',
-    email: 'muxzahassan@gmail.com',
-    phoneNumber: '+60142659148',
-    gender: 'Male',
-    dateofBirth: '13/03/2002',
-  });
+  // [FIX] Get user data and logout from AuthContext — was previously hardcoded to 'Muaz Abu Hassan'
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
   }
 
+  // [FIX] Added placeholder for Edit Profile navigation (was previously missing onPress handler)
+  const handleEditProfile = () => {
+    // TODO: Navigate to an Edit Profile screen when implemented
+    alert(t('profile.edit_coming_soon'));
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>{user.name}</Text>
+      {/* [FIX] Display actual user name from auth context */}
+      <Text style={styles.name}>
+        {user?.firstName || ''} {user?.lastName || ''}
+      </Text>
 
       <View style={styles.infoBox}>
         <Text style={styles.label}>{t('profile.email')}</Text>
-        <Text style={styles.value}>{user.email}</Text>
+        {/* [FIX] Display actual user email from auth context */}
+        <Text style={styles.value}>{user?.email || '-'}</Text>
 
         <Text style={styles.label}>{t('profile.phone')}</Text>
-        <Text style={styles.value}>{user.phoneNumber}</Text>
+        {/* [FIX] Display actual user phone from auth context (if available) */}
+        <Text style={styles.value}>{user?.phone || '-'}</Text>
 
         <Text style={styles.label}>{t('profile.gender')}</Text>
-        <Text style={styles.value}>{user.gender}</Text>
+        {/* [FIX] Display actual user gender from auth context (if available) */}
+        <Text style={styles.value}>{user?.gender || '-'}</Text>
 
         <Text style={styles.label}>{t('profile.dob')}</Text>
-        <Text style={styles.value}>{user.dateofBirth}</Text>
-
+        {/* [FIX] Display actual user DOB from auth context (if available) */}
+        <Text style={styles.value}>{user?.dateOfBirth || '-'}</Text>
       </View>
 
-      <TouchableOpacity style={styles.editButton}>
+      {/* [FIX] Added onPress handler — was previously a no-op button */}
+      <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
         <Text style={styles.editText}>{t('profile.edit')}</Text>
       </TouchableOpacity>
 

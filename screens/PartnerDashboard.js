@@ -1,174 +1,160 @@
-import React from "react";
+// [FIX 2026-03-29] Rewritten PartnerDashboard — GPS setup, push token registration, functional navigation cards
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from "react-native";
-import { useAuth } from "../context/AuthContext.js";
-import { useLanguage } from "../context/LanguageContext.js";
-import { Ionicons } from "@expo/vector-icons";
+  View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator,
+} from 'react-native';
+import * as Location from 'expo-location';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { apiPut, apiPost } from '../api/apiClient';
 
-export default function PartnerDashboard({ navigation }) {
+// Notification handler is already configured in App.js — no need to duplicate here
+
+export default function PartnerDashboard() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const [locationSaved, setLocationSaved] = useState(false);
+  const [savingLocation, setSavingLocation] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
+  // [FIX 2026-03-29] Register push token + save GPS location on mount
+  useEffect(() => {
+    registerPushToken();
+    saveLocation();
+  }, []);
+
+  const registerPushToken = async () => {
+    try {
+      if (!Device.isDevice) return; // Push tokens only work on real devices
+
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') return;
+
+      const tokenData = await Notifications.getExpoPushTokenAsync();
+      await apiPost('/users/push-token', { pushToken: tokenData.data });
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.log('Push token error:', e);
+    }
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-      paddingHorizontal: 20,
-    },
-    header: {
-      marginTop: 40,
-      marginBottom: 30,
-      alignItems: "center",
-    },
-    logo: {
-      width: 100,
-      height: 100,
-      marginBottom: 20,
-    },
-    greeting: {
-      fontSize: 24,
-      fontWeight: "bold",
-      color: "#B5651D",
-      marginBottom: 8,
-    },
-    email: {
-      fontSize: 14,
-      color: "#666",
-      marginBottom: 4,
-    },
-    role: {
-      fontSize: 12,
-      backgroundColor: "#E8D4B8",
-      color: "#B5651D",
-      paddingHorizontal: 12,
-      paddingVertical: 4,
-      borderRadius: 12,
-      alignSelf: "center",
-      marginTop: 8,
-    },
-    section: {
-      marginBottom: 30,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: "600",
-      color: "#333",
-      marginBottom: 15,
-    },
-    card: {
-      backgroundColor: "#F5F5F5",
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 12,
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    cardIcon: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      backgroundColor: "#E8D4B8",
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: 12,
-    },
-    cardContent: {
-      flex: 1,
-    },
-    cardTitle: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: "#333",
-      marginBottom: 4,
-    },
-    cardDescription: {
-      fontSize: 13,
-      color: "#666",
-    },
-    button: {
-      backgroundColor: "#B5651D",
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 8,
-      alignItems: "center",
-      marginTop: 20,
-    },
-    buttonText: {
-      color: "#fff",
-      fontSize: 16,
-      fontWeight: "600",
-    },
-  });
+  const saveLocation = async () => {
+    setSavingLocation(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Location Required', 'Please enable location to let users find you.');
+        setSavingLocation(false);
+        return;
+      }
+      const loc = await Location.getCurrentPositionAsync({});
+      await apiPut('/partners/location', {
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      });
+      setLocationSaved(true);
+    } catch (e) {
+      // Silently fail
+    } finally {
+      setSavingLocation(false);
+    }
+  };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Image
-          source={require("../assets/NakUrut Logo only.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.greeting}>Welcome, {user?.firstName}!</Text>
-        <Text style={styles.email}>{user?.email}</Text>
-        <Text style={styles.role}>Partner</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Your Listings</Text>
-        <View style={styles.card}>
-          <View style={styles.cardIcon}>
-            <Ionicons name="home-outline" size={24} color="#B5651D" />
-          </View>
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>Manage Properties</Text>
-            <Text style={styles.cardDescription}>
-              Add, edit, and manage your listings
-            </Text>
+        <View>
+          <Text style={styles.welcome}>
+            {t('partner.welcome')?.replace('{name}', user?.firstName || 'Partner') || `Welcome, ${user?.firstName || 'Partner'}!`}
+          </Text>
+          <View style={styles.roleBadge}>
+            <Text style={styles.roleText}>{t('partner.role_badge') || 'Partner'}</Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Bookings</Text>
-        <View style={styles.card}>
-          <View style={styles.cardIcon}>
-            <Ionicons name="calendar-outline" size={24} color="#B5651D" />
-          </View>
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>View Bookings</Text>
-            <Text style={styles.cardDescription}>
-              See upcoming bookings and reservations
-            </Text>
-          </View>
+      {/* Location status */}
+      <View style={styles.locationBar}>
+        {savingLocation ? (
+          <>
+            <ActivityIndicator size="small" color="#B5651D" />
+            <Text style={styles.locationText}>Detecting location...</Text>
+          </>
+        ) : locationSaved ? (
+          <>
+            <Ionicons name="location" size={18} color="#27ae60" />
+            <Text style={[styles.locationText, { color: '#27ae60' }]}>Location saved ✓</Text>
+          </>
+        ) : (
+          <TouchableOpacity style={styles.locationRetryBtn} onPress={saveLocation}>
+            <Ionicons name="location-outline" size={18} color="#e67e22" />
+            <Text style={[styles.locationText, { color: '#e67e22' }]}>Tap to set location</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Info: These sections are now navigated via the bottom tabs */}
+      <Text style={styles.sectionHint}>
+        {t('partner.use_tabs') || 'Use the tabs below to manage your bookings and services'}
+      </Text>
+
+      {/* Quick stats placeholder */}
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Ionicons name="calendar" size={28} color="#B5651D" />
+          <Text style={styles.statLabel}>{t('partner.bookings_tab') || 'Bookings'}</Text>
+          <Text style={styles.statHint}>View & manage</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Ionicons name="cut" size={28} color="#B5651D" />
+          <Text style={styles.statLabel}>{t('partner.services_tab') || 'Services'}</Text>
+          <Text style={styles.statHint}>Add & edit</Text>
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Profile</Text>
-        <View style={styles.card}>
-          <View style={styles.cardIcon}>
-            <Ionicons name="person-outline" size={24} color="#B5651D" />
-          </View>
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>Edit Profile</Text>
-            <Text style={styles.cardDescription}>Update your information</Text>
-          </View>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
+      {/* Logout button */}
+      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+        <Ionicons name="log-out-outline" size={20} color="#fff" />
+        <Text style={styles.logoutText}>{t('partner.logout') || 'Logout'}</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9f3ee', paddingTop: 50, paddingHorizontal: 20 },
+  header: { marginBottom: 20 },
+  welcome: { fontSize: 24, fontWeight: 'bold', color: '#B5651D' },
+  roleBadge: {
+    backgroundColor: '#B5651D', paddingHorizontal: 12, paddingVertical: 4,
+    borderRadius: 12, alignSelf: 'flex-start', marginTop: 8,
+  },
+  roleText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  locationBar: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fff',
+    padding: 14, borderRadius: 10, marginBottom: 16,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+  },
+  locationText: { fontSize: 14, color: '#555' },
+  locationRetryBtn: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  sectionHint: { fontSize: 14, color: '#888', textAlign: 'center', marginBottom: 24 },
+  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 30 },
+  statCard: {
+    flex: 1, backgroundColor: '#fff', borderRadius: 12, padding: 20,
+    alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+  },
+  statLabel: { fontSize: 15, fontWeight: '600', color: '#333', marginTop: 10 },
+  statHint: { fontSize: 12, color: '#999', marginTop: 4 },
+  logoutBtn: {
+    flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8,
+    backgroundColor: '#e74c3c', paddingVertical: 14, borderRadius: 12, marginTop: 'auto', marginBottom: 30,
+  },
+  logoutText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+});

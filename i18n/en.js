@@ -32,9 +32,13 @@ export default {
     'register.role_user': 'User',
     'register.role_partner_tooltip': 'Register as a massage therapist or service provider to offer your services on the platform.',
     'register.role_user_tooltip': 'Register as a customer to browse and book massage services.',
+    'register.error_required': 'This field is required',
+    'register.error_email_format': 'Please enter a valid email address',
+    'register.error_phone_format': 'Please enter a valid phone number',
+    'register.error_password_length': 'Password must be at least 6 characters',
 
     // Home
-    'home.greeting': 'Hi Muaz 👋',
+    'home.greeting': 'Hi {name}',
     'home.subtitle': 'Ready to relax today?',
     'home.search_placeholder': 'Search for services or masseurs...',
     'home.services': 'Services',
@@ -43,6 +47,7 @@ export default {
     'home.cat_foot': 'Foot Massage',
     'home.cat_therapeutic': 'Therapeutic',
     'home.cat_home_service': 'Home Service',
+    'home.no_results': 'No results found',
 
     // Booking
     'booking.title': 'NakUrut Booking',
@@ -52,14 +57,22 @@ export default {
     'booking.km': 'km',
     'booking.book_with': 'Book with',
     'booking.service_type': 'Service Type',
-    'booking.date': 'Date (YYYY-MM-DD)',
-    'booking.time': 'Time (HH:MM)',
+    'booking.date': 'Date',
+    'booking.time': 'Time',
     'booking.confirm': 'Confirm Booking',
     'booking.cancel': 'Cancel',
     'booking.error_title': 'Error',
     'booking.error_fill_all': 'Please fill in all fields',
     'booking.success_title': 'Success',
     'booking.success_message': 'Your massage with {name} is booked!',
+    'booking.empty_state': 'Tap "Search" to find nearby massagers',
+    // [FIX 2026-03-29] Added new booking flow translations
+    'booking.location_denied': 'Location permission denied. Search results won\'t include distance.',
+    'booking.available_services': 'Available Services',
+    'booking.no_services': 'No services listed yet',
+    'booking.book_now': 'Book',
+    'booking.confirm_booking': 'Confirm Booking',
+    'booking.back': 'Back',
 
     // Profile
     'profile.email': 'Email',
@@ -68,9 +81,26 @@ export default {
     'profile.dob': 'Date of Birth',
     'profile.edit': 'Edit Profile',
     'profile.logout': 'Logout',
+    'profile.edit_coming_soon': 'Edit Profile feature coming soon!',
 
     // Tabs
     'tabs.home': 'Home',
     'tabs.booking': 'Booking',
     'tabs.profile': 'Profile',
+
+    // Partner Dashboard
+    'partner.welcome': 'Welcome, {name}!',
+    'partner.role_badge': 'Partner',
+    'partner.logout': 'Logout',
+    // [FIX 2026-03-29] Added partner tab + service management translations
+    'partner.dashboard_tab': 'Dashboard',
+    'partner.bookings_tab': 'Bookings',
+    'partner.services_tab': 'Services',
+    'partner.use_tabs': 'Use the tabs below to manage your bookings and services',
+    'partner.bookings_title': 'Bookings',
+    'partner.no_bookings': 'No bookings yet',
+    'partner.accept': 'Accept',
+    'partner.reject': 'Reject',
+    'partner.manage_services': 'My Services',
+    'partner.no_services': 'No services yet. Add your first service!',
 };
