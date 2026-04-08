@@ -83,7 +83,9 @@ function RootNavigator() {
         });
       }
 
-      const tokenData = await Notifications.getExpoPushTokenAsync();
+      const tokenData = await Notifications.getExpoPushTokenAsync({
+        projectId: '72896770-481d-4b7c-a2b6-08f36036a981',
+      });
       await apiPost('/users/push-token', { pushToken: tokenData.data });
     } catch (e) {
       // Push token registration is best-effort

@@ -1,7 +1,7 @@
 // [FIX 2026-03-29] Rewritten PartnerDashboard — GPS setup, push token registration, functional navigation cards
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator,
+  View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Switch
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Device from 'expo-device';
@@ -9,7 +9,7 @@ import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { apiPut, apiPost } from '../api/apiClient';
+import { apiPut, apiPost, apiGet } from '../api/apiClient';
 
 // Notification handler is already configured in App.js — no need to duplicate here
 
@@ -18,12 +18,41 @@ export default function PartnerDashboard() {
   const { t } = useLanguage();
   const [locationSaved, setLocationSaved] = useState(false);
   const [savingLocation, setSavingLocation] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [loadingActive, setLoadingActive] = useState(true);
 
-  // [FIX 2026-03-29] Register push token + save GPS location on mount
+  // [FIX 2026-03-29] Register push token, save GPS location, get active status on mount
   useEffect(() => {
     registerPushToken();
     saveLocation();
+    fetchActiveStatus();
   }, []);
+
+  const fetchActiveStatus = async () => {
+    try {
+      const res = await apiGet('/partners/active');
+      if (res.success) setIsActive(res.isActive);
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.log('Fetch active status error:', e);
+    } finally {
+      setLoadingActive(false);
+    }
+  };
+
+  const toggleActiveStatus = async (newValue) => {
+    // Optimistic UI update
+    setIsActive(newValue);
+    try {
+      const res = await apiPut('/partners/active', { isActive: newValue });
+      if (!res.success) {
+        setIsActive(!newValue); // Revert on API failure
+        Alert.alert('Error', res.message || 'Failed to update status');
+      }
+    } catch (e) {
+      setIsActive(!newValue); // Revert on API failure
+      Alert.alert('Error', 'Failed to connect to server');
+    }
+  };
 
   const registerPushToken = async () => {
     try {
@@ -37,7 +66,9 @@ export default function PartnerDashboard() {
       }
       if (finalStatus !== 'granted') return;
 
-      const tokenData = await Notifications.getExpoPushTokenAsync();
+      const tokenData = await Notifications.getExpoPushTokenAsync({
+        projectId: '72896770-481d-4b7c-a2b6-08f36036a981',
+      });
       await apiPost('/users/push-token', { pushToken: tokenData.data });
     } catch (e) {
       if (process.env.NODE_ENV === 'development') console.log('Push token error:', e);
@@ -78,6 +109,24 @@ export default function PartnerDashboard() {
             <Text style={styles.roleText}>{t('partner.role_badge') || 'Partner'}</Text>
           </View>
         </View>
+      </View>
+
+      {/* Active Status Toggle */}
+      <View style={styles.activeBar}>
+        <View style={styles.activeTextContainer}>
+          <Text style={styles.activeLabel}>Status:</Text>
+          <Text style={[styles.activeValue, { color: isActive ? '#27ae60' : '#e74c3c' }]}>
+            {loadingActive ? 'Loading...' : isActive ? 'Active (Receiving Bookings)' : 'Inactive (Hidden)'}
+          </Text>
+        </View>
+        <Switch
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={isActive ? '#3498db' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleActiveStatus}
+          value={isActive}
+          disabled={loadingActive}
+        />
       </View>
 
       {/* Location status */}
@@ -137,6 +186,14 @@ const styles = StyleSheet.create({
     borderRadius: 12, alignSelf: 'flex-start', marginTop: 8,
   },
   roleText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  activeBar: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: '#fff', padding: 14, borderRadius: 10, marginBottom: 16,
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+  },
+  activeTextContainer: { flexDirection: 'column' },
+  activeLabel: { fontSize: 14, color: '#555', fontWeight: 'bold' },
+  activeValue: { fontSize: 13, marginTop: 2, fontWeight: '500' },
   locationBar: {
     flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fff',
     padding: 14, borderRadius: 10, marginBottom: 16,

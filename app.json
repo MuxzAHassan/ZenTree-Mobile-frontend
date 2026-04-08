@@ -20,10 +20,17 @@
         "foregroundImage": "./assets/NakUrut Logo only.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.muxz.zentree"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "72896770-481d-4b7c-a2b6-08f36036a981"
+      }
+    },
+    "owner": "muxz"
   }
 }
