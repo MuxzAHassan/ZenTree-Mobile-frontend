@@ -4,8 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
+import LoginScreen from './screens/auth/LoginScreen';
+import RegisterScreen from './screens/auth/RegisterScreen';
 import MainTabs from './navigation/MainTabs';
 // [FIX 2026-03-29] Use PartnerTabs instead of single PartnerDashboard screen
 import PartnerTabs from './navigation/PartnerTabs';
