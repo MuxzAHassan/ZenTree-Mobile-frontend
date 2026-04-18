@@ -19,6 +19,7 @@ import LogoWithText from "../../assets/LogowithText.svg";
 import { useLanguage } from "../../context/LanguageContext.js";
 import LanguageSelector from "../../components/LanguageSelector.js";
 import { registerUser } from "../../api/auth";
+import Snackbar from "../../components/Snackbar";
 
 const MONTHS = [
   "Jan",
@@ -61,10 +62,16 @@ export default function RegisterScreen({ navigation }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [snackbar, setSnackbar] = useState({ visible: false, message: "", type: "error" });
   const [tooltipVisible, setTooltipVisible] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const showSnackbar = (message, type = "error") =>
+    setSnackbar({ visible: true, message, type });
+  const hideSnackbar = () =>
+    setSnackbar((prev) => ({ ...prev, visible: false }));
 
   // Date picker temp state
   const DEFAULT_DATE = new Date();
@@ -166,13 +173,15 @@ export default function RegisterScreen({ navigation }) {
       });
       const data = await response.json();
       if (response.ok) {
-        alert(t("register.success"));
+        showSnackbar(t("register.success"), "success");
+        await new Promise((resolve) => setTimeout(resolve, 1200));
         navigation.navigate("Login");
       } else {
-        alert(data.message || t("register.error_default"));
+        showSnackbar(data.message || t("register.error_default"), "error");
       }
     } catch (error) {
-      alert("Error: " + error.message);
+      console.error("Register error:", error);
+      showSnackbar(t("register.error_default"), "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -472,6 +481,13 @@ export default function RegisterScreen({ navigation }) {
           </View>
         </Pressable>
       </Modal>
+
+      <Snackbar
+        visible={snackbar.visible}
+        message={snackbar.message}
+        type={snackbar.type}
+        onHide={hideSnackbar}
+      />
 
       {/* Date picker bottom sheet */}
       <Modal

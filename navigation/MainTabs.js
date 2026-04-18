@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
-import BookingScreen from '../screens/BookingScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import HomeScreen from '../screens/user/HomeScreen';
+import BookingScreen from '../screens/user/BookingScreen';
+import ProfileScreen from '../screens/shared/ProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../context/LanguageContext.js';
 

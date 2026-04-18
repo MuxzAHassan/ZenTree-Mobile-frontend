@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useLanguage } from '../context/LanguageContext.js';
+import { useLanguage } from '../../context/LanguageContext.js';
 // [FIX] Import useAuth to get the logged-in user's name instead of hardcoding it
-import { useAuth } from '../context/AuthContext.js';
+import { useAuth } from '../../context/AuthContext.js';
 
 export default function HomeScreen() {
   const navigation = useNavigation();

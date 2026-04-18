@@ -6,4 +6,4 @@
 const LOCAL_URL = "http://192.168.0.7:5000";
 const PROD_URL = "https://zentree-backend-24l6.onrender.com";
 
-export const BASE_URL = __DEV__ ? LOCAL_URL : PROD_URL;
+export const BASE_URL = PROD_URL;

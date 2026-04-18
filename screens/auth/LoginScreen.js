@@ -17,6 +17,7 @@ import { useAuth } from "../../context/AuthContext.js";
 import LanguageSelector from "../../components/LanguageSelector.js";
 import { Ionicons } from "@expo/vector-icons";
 import { loginUser } from "../../api/auth";
+import Snackbar from "../../components/Snackbar";
 
 export default function LoginScreen({ navigation }) {
   const { t } = useLanguage();
@@ -27,13 +28,24 @@ export default function LoginScreen({ navigation }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [snackbar, setSnackbar] = useState({
+    visible: false,
+    message: "",
+    type: "error",
+  });
+
+  const showSnackbar = (message, type = "error") =>
+    setSnackbar({ visible: true, message, type });
+  const hideSnackbar = () =>
+    setSnackbar((prev) => ({ ...prev, visible: false }));
 
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) newErrors.email = "Email is required";
-    else if (!emailRegex.test(email)) newErrors.email = "Enter a valid email";
-    if (!password) newErrors.password = "Password is required";
+    if (!email.trim()) newErrors.email = t("login.error_email_required");
+    else if (!emailRegex.test(email))
+      newErrors.email = t("login.error_email_format");
+    if (!password) newErrors.password = t("login.error_password_required");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -48,15 +60,15 @@ export default function LoginScreen({ navigation }) {
       const data = await response.json();
 
       if (data.success) {
-        // Store auth data in context
+        showSnackbar(t("login.success"), "success");
+        await new Promise((resolve) => setTimeout(resolve, 1200));
         await login(data);
-        // Navigation is handled automatically by RootNavigator based on user role
       } else {
-        alert(data.message || t("login.error_invalid"));
+        showSnackbar(data.message || t("login.error_invalid"), "error");
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert(t("login.error_generic"));
+      showSnackbar(t("login.error_generic"), "error");
     } finally {
       // [FIX] Always re-enable button after attempt completes
       setIsSubmitting(false);
@@ -172,6 +184,12 @@ export default function LoginScreen({ navigation }) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <Snackbar
+        visible={snackbar.visible}
+        message={snackbar.message}
+        type={snackbar.type}
+        onHide={hideSnackbar}
+      />
     </View>
   );
 }

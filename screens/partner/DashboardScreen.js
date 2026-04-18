@@ -7,9 +7,9 @@ import * as Location from 'expo-location';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
-import { apiPut, apiPost, apiGet } from '../api/apiClient';
+import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { apiPut, apiPost, apiGet } from '../../api/apiClient';
 
 // Notification handler is already configured in App.js — no need to duplicate here
 

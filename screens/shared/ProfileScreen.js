@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useLanguage } from '../context/LanguageContext.js';
+import { useLanguage } from '../../context/LanguageContext.js';
 // [FIX] Import useAuth to display actual logged-in user data instead of hardcoded values
-import { useAuth } from '../context/AuthContext.js';
+import { useAuth } from '../../context/AuthContext.js';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();

@@ -5,8 +5,8 @@ import {
   StyleSheet, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useLanguage } from '../context/LanguageContext';
-import { apiGet, apiPost, apiPut, apiDelete } from '../api/apiClient';
+import { useLanguage } from '../../context/LanguageContext';
+import { apiGet, apiPost, apiPut, apiDelete } from '../../api/apiClient';
 
 export default function ManageServicesScreen() {
   const { t } = useLanguage();

@@ -1,10 +1,10 @@
 // [FIX 2026-03-29] NEW FILE — PartnerTabs: bottom tab navigation for partners
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import PartnerDashboard from '../screens/PartnerDashboard';
-import PartnerBookingsScreen from '../screens/PartnerBookingsScreen';
-import ManageServicesScreen from '../screens/ManageServicesScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import PartnerDashboard from '../screens/partner/DashboardScreen';
+import PartnerBookingsScreen from '../screens/partner/BookingsScreen';
+import ManageServicesScreen from '../screens/partner/ManageServicesScreen';
+import ProfileScreen from '../screens/shared/ProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../context/LanguageContext';
 

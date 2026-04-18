@@ -10,6 +10,11 @@ export default {
     'login.register_link': 'Register',
     'login.error_invalid': 'Invalid email or password',
     'login.error_generic': 'Something went wrong. Please try again.',
+    'login.error_email_required': 'Email is required',
+    'login.error_email_format': 'Enter a valid email',
+    'login.error_password_required': 'Password is required',
+    'login.error_not_registered': 'Email is not registered',
+    'login.success': 'Welcome back!',
 
     // Register
     'register.firstName': 'First Name',

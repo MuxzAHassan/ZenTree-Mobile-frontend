@@ -10,6 +10,11 @@ export default {
     'login.register_link': 'Daftar',
     'login.error_invalid': 'Emel atau kata laluan tidak sah',
     'login.error_generic': 'Sesuatu tidak kena. Sila cuba lagi.',
+    'login.error_email_required': 'Emel diperlukan',
+    'login.error_email_format': 'Masukkan emel yang sah',
+    'login.error_password_required': 'Kata laluan diperlukan',
+    'login.error_not_registered': 'Emel tidak didaftarkan',
+    'login.success': 'Selamat kembali!',
 
     // Register
     'register.firstName': 'Nama Pertama',

@@ -5,8 +5,8 @@ import {
   ActivityIndicator, Alert, RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useLanguage } from '../context/LanguageContext';
-import { apiGet, apiPut } from '../api/apiClient';
+import { useLanguage } from '../../context/LanguageContext';
+import { apiGet, apiPut } from '../../api/apiClient';
 
 const STATUS_COLORS = {
   pending: '#f39c12',

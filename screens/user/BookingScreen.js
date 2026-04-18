@@ -7,8 +7,8 @@ import {
 import * as Location from 'expo-location';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import { useLanguage } from '../context/LanguageContext';
-import { apiGet, apiPost } from '../api/apiClient';
+import { useLanguage } from '../../context/LanguageContext';
+import { apiGet, apiPost } from '../../api/apiClient';
 
 export default function BookingScreen() {
   const { t } = useLanguage();
